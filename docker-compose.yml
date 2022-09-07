@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  db:
+    image: luisdev/database:1.0
+    container_name: db_express
+    ports:
+      - "8085:3306"
+    networks:
+      - net
+    env_file:
+      - .env # Ruta del archivo
+    volumes:
+      - "./schemas:/var/lib/mysqlx"
+      - "./src/database/db.sql:/docker-entrypoint-initdb.d/db.sql"
+  nodejs:
+    image: luisdev/backend:1.0
+    container_name: app_express
+    ports:
+      - "8077:3000"
+    depends_on:
+      - db
+    networks:
+      - net
+    links:
+      - db
+    env_file:
+      - .env # Ruta del archivo
+networks:
+  net:
